@@ -1,0 +1,48 @@
+<header style="text-align: center; margin-bottom: 1rem;">
+  <h1 style="color: rgb(20, 14, 14); font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+    Cable Specification viewer
+  </h1>
+  <p style="color: rgba(20, 13, 13, 0.8); font-size: 1.1rem;">
+    View technical documents and get desired output.
+  </p>
+</header>
+<div class="chat-container">
+  <div class="history-section">
+    <h3>Search History</h3>
+    <ul>
+      <li *ngFor="let item of searchHistory">{{ item }}</li>
+    </ul>
+  </div>
+    <div class="chat-card">
+      <div class="chat-header">
+        <div class="h2">Sales</div>
+      </div>
+      <div class="chat-body">
+        <div *ngFor="let msg of chatMessages" [ngClass]="{'message': true, 'incoming': msg.sender === 'bot', 'outgoing': msg.sender === 'user'}">
+          <p>{{ msg.text }}</p>
+        </div>
+        <div *ngIf="selectedPdf && selectedPdfUrl">
+          <h4>Viewing PDF: <a [href]="selectedPdfUrl" target="_blank">{{ selectedPdf.name }}</a></h4>
+          <!-- <iframe *ngIf="selectedPdfUrl" [src]="selectedPdfUrl" width="100%" height="400px"></iframe> -->
+        </div>
+      </div>
+      <div class="chat-footer">
+        <input [(ngModel)]="currentMessage" placeholder="Write a message" type="text" (keyup)="onSearchInput($event)" (keyup.enter)="sendMessage()">
+        <button (click)="sendMessage()">Send</button>
+        
+        <div class="search-suggestions" *ngIf="pdfSuggestions.length > 0">
+          <ul>
+            <li *ngFor="let suggestion of pdfSuggestions" 
+                (click)="openPdfFile(suggestion)"
+                class="suggestion-item">
+              <div class="suggestion-content">
+                <span class="pdf-icon">📄</span>
+                <span class="pdf-name" style="color: white;">{{ suggestion.name }}</span>
+                <span class="pdf-path">{{ suggestion.path }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>

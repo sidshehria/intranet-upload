@@ -1,0 +1,17 @@
+{
+  "cableID": 0,
+  "cableDescription": "12F Armoured loose-tube cable",
+  "fiberCount": "12F",
+  "typeofCable": "UT",
+  "span": "N/A",
+  "tube": "Unitube",
+  "tubeColorCoding": "N/A",
+  "fiberType": "G.652D",
+  "diameter": "3.2 \u00b1 0.2 mm",
+  "tensile": "24 N",
+  "nescCondition": "Temperature range: -5 \u00b0C, 50 \u00b0C, -40 \u00b0C, 70 \u00b0C, -20 \u00b0C, 70 \u00b0C",
+  "crush": "2000 N/10 cm",
+  "blowingLength": "N/A",
+  "datasheetURL": "Datasheet - 12F,24F D UTA GY SS PE BK - 8.5MM.pdf",
+  "isActive": "Y"
+}

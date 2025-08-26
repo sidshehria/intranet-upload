@@ -1,0 +1,17 @@
+{
+  "cableID": 0,
+  "cableDescription": "96F Optical Fiber Cable",
+  "fiberCount": "96F",
+  "typeofCable": "MT",
+  "span": "N/A",
+  "tube": "Multitube",
+  "tubeColorCoding": "N/A",
+  "fiberType": "G.652D",
+  "diameter": "10.5 \u00b1 0.5 mm",
+  "tensile": "12 N",
+  "nescCondition": "Temperature range: -20 \u00b0C, 70 \u00b0C, -20 \u00b0C, 70 \u00b0C, -20 \u00b0C, 70 \u00b0C",
+  "crush": "1000 N/100 x 100 mm",
+  "blowingLength": "N/A",
+  "datasheetURL": "Datasheet  - 24F,96F MTUA SS LSZH BK - Indoor - AR.pdf",
+  "isActive": "Y"
+}

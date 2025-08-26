@@ -1,0 +1,257 @@
+<header style="text-align: center; margin-bottom: 1rem;">
+  <h1 style="color: rgb(20, 14, 14); font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+    Cable Specification viewer
+  </h1>
+  <p
+    style="color: rgba(20, 13, 13, 0.8); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 10px;">
+    View technical documents and get desired output.
+  </p>
+</header>
+
+<div class="chat-container">
+  <!-- Toggle buttons positioned at the right end -->
+  <div class="card">
+    <div class="chat-header" style="background-color: white; display: flex; justify-content: flex-end;  gap: 10px; margin-bottom: 1rem;">
+      <button class="search-toggle-btn" (click)="toggleSearchForm()" [class.active]="isSearchFormVisible"
+        style="border: none; background: none; cursor: pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-funnel-fill" 
+          viewBox="0 0 16 16">
+          <path
+            d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z" />
+          <title>Show Filters</title>
+        </svg>
+      </button>
+      <button style="border: none; background: none; cursor: pointer;">
+        <svg (click)="clearallfiters()" xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
+          class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+          <path
+            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
+          <title>Clear Filters</title>
+        </svg>
+      </button>
+    </div>
+
+    <div class="card-content">
+      <!-- Search Parameters section below the buttons -->
+      <div class="history-section" [class.visible]="isSearchFormVisible" [class.hidden]="!isSearchFormVisible">
+        <h3 style="text-align: center; margin: 0; padding: 1rem 0;"> Search Parameters</h3>
+
+        <div style="flex: 1; overflow-y: auto; border: 1px solid #ddd; margin: 0 0px;">
+          <ul style="width: 95%; padding: 10px; margin: 0; list-style-type: none;">
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; flex-direction: column; margin-right: 20px; width: 200px; position: relative;">
+                <input type="text" id="fiberCount" autocomplete="off" [(ngModel)]="searchParams.fiberCount"
+                  (input)="onFiberCountInput($event)" name="text" class="input" placeholder="Type fiber count...">
+                <div *ngIf="fiberCountOptions.length > 0 && searchParams.fiberCount"
+                  style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                  <div *ngFor="let option of fiberCountOptions" (click)="selectFiberCount(option)"
+                    style="padding: 4px 8px; cursor: pointer; font-size: 0.8rem;"
+                    onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='white'">
+                    {{option}}
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; flex-direction: column; margin-right: 20px; width: 200px; position: relative;">
+                <input type="text" id="typeOfCable" autocomplete="off" [(ngModel)]="searchParams.typeOfCable"
+                  (input)="onTypeOfCableInput($event)" name="text" class="input" placeholder="Type cable type...">
+                <div *ngIf="typeOfCableOptions.length > 0 && searchParams.typeOfCable"
+                  style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                  <div *ngFor="let option of typeOfCableOptions" (click)="selectTypeOfCable(option)"
+                    style="padding: 4px 8px; cursor: pointer; font-size: 0.8rem;"
+                    onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='white'">
+                    {{option}}
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; flex-direction: column; margin-right: 20px; width: 200px; position: relative;">
+                <input type="text" id="fiberType" autocomplete="off" [(ngModel)]="searchParams.fiberType"
+                  (input)="onFiberTypeInput($event)" placeholder="Type fiber type..." name="text" class="input">
+                <div *ngIf="fiberTypeOptions.length > 0 && searchParams.fiberType"
+                  style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                  <div *ngFor="let option of fiberTypeOptions" (click)="selectFiberType(option)"
+                    style="padding: 4px 8px; cursor: pointer; font-size: 0.8rem;"
+                    onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='white'">
+                    {{option}}
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; flex-direction: column; margin-right: 20px; width: 200px; position: relative;">
+                <input type="text" id="nescConditions" autocomplete="off" [(ngModel)]="searchParams.nescConditions"
+                  (input)="onNESCConditionsInput($event)" placeholder="Type NESC conditions..." name="text"
+                  class="input">
+                <div *ngIf="nescConditionsOptions.length > 0 && searchParams.nescConditions"
+                  style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                  <div *ngFor="let option of nescConditionsOptions" (click)="selectNESCConditions(option)"
+                    style="padding: 4px 8px; cursor: pointer; font-size: 0.8rem;"
+                    onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='white'">
+                    {{option}}
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; flex-direction: column; margin-right: 20px; width: 200px; position: relative;">
+                <input type="text" id="diameter" autocomplete="off" [(ngModel)]="searchParams.diameter"
+                  (input)="onDiameterInput($event)" placeholder="Type diameter..." name="text" class="input">
+                <div *ngIf="diameterOptions.length > 0 && searchParams.diameter"
+                  style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                  <div *ngFor="let option of diameterOptions" (click)="selectDiameter(option)"
+                    style="padding: 4px 8px; cursor: pointer; font-size: 0.8rem;"
+                    onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='white'">
+                    {{option}}
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; flex-direction: column; margin-right: 20px; width: 200px; position: relative;">
+                <input type="text" id="tensileStrength" autocomplete="off" [(ngModel)]="searchParams.tensileStrength"
+                  (input)="onTensileStrengthInput($event)" placeholder="Type tensile strength..." name="text"
+                  class="input">
+                <div *ngIf="tensileStrengthOptions.length > 0 && searchParams.tensileStrength"
+                  style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                  <div *ngFor="let option of tensileStrengthOptions" (click)="selectTensileStrength(option)"
+                    style="padding: 4px 8px; cursor: pointer; font-size: 0.8rem;"
+                    onmouseover="this.style.backgroundColor='#f0f0f0'" onmouseout="this.style.backgroundColor='white'">
+                    {{option}}
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="chat-footer"
+          style="text-align: center; position: sticky; bottom: 0; padding: 10px; margin-top: auto;">
+          <button
+            style="width: 100%; font-size: 1rem; background-color: #041a72; color: white; border: none; border-radius: 4px; cursor: pointer;"
+            (click)="onSearch()" [disabled]="isLoading">
+            {{isLoading ? 'Searching...' : 'Search'}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-card">
+    <div class="chat-header">
+      <div class="h2">Accuracy with Pdf Link</div>
+    </div>
+    <div class="chat-body">
+      <div class="pdf-accuracy-section">
+        <div *ngIf="cableData && cableData.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Select</th>
+                <th style=" gap: 10px; width: 1020px;">Cable Description</th>
+                <th>Accuracy</th>
+                <th>PDF link</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let cable of cableData; let i = index">
+              <tr>
+                <td> <input style="margin-left: 20px;" type="checkbox" [(ngModel)]="selectedCables[i]"
+                    (change)="onCheckboxChange(i)" id="cable-{{i}}">
+                  <label for="cable-{{i}}" class="checkbox-label"></label>
+                </td>
+                <td (click)="toggleCableDetails(i)"> {{cable.cableDescription}}</td>
+                <td>
+                  <div class="accuracy-display">
+                    <div class="accuracy-bar">
+                      <div class="accuracy-fill" [style.width.%]="cable.accuracy || 0"
+                        [style.background-color]="getAccuracyColor(cable.accuracy || 0)">
+                        {{cable.accuracy || 0}}%
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td> <a *ngIf="cable.datasheetURL" [href]="cable.datasheetURL" target="_blank" class="pdf-link">
+                    View PDF
+                  </a>
+                  <span *ngIf="!cable.datasheetURL" class="no-pdf">No PDF</span>
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <div *ngIf="expandedCableIndex === i" class="cable-details-section">
+                    <div class="cable-card">
+                      <div class="card-content">
+                        <div class="cable-property">
+                          <span class="property-label">Type of cable:</span>
+                          <span class="property-value"
+                            [class.highlight-match]="getHighlightClass(cable.typeofCable, searchParams.typeOfCable)">
+                            {{cable.typeofCable}}
+                          </span>
+                        </div>
+                        <div class="cable-property">
+                          <span class="property-label">Fiber Count:</span>
+                          <span class="property-value"
+                            [class.highlight-match]="getHighlightClass(cable.fiberCount, searchParams.fiberCount)">
+                            {{cable.fiberCount}}
+                          </span>
+                        </div>
+                        <div class="cable-property">
+                          <span class="property-label">Fiber Type:</span>
+                          <span class="property-value"
+                            [class.highlight-match]="getHighlightClass(cable.fiberType, searchParams.fiberType)">
+                            {{cable.fiberType}}
+                          </span>
+                        </div>
+                        <div class="cable-property">
+                          <span class="property-label">Diameter:</span>
+                          <span class="property-value"
+                            [class.highlight-match]="getHighlightClass(cable.diameter, searchParams.diameter)">
+                            {{cable.diameter}}
+                          </span>
+                        </div>
+                        <div class="cable-property">
+                          <span class="property-label">Tensile Strength:</span>
+                          <span class="property-value"
+                            [class.highlight-match]="getHighlightClass(cable.tensile, searchParams.tensileStrength)">
+                            {{cable.tensile}}
+                          </span>
+                        </div>
+                        <div class="cable-property">
+                          <span class="property-label">Crush Resistance:</span>
+                          <span class="property-value">{{cable.crush}}</span>
+                        </div>
+                        <div class="cable-property">
+                          <span class="property-label">NESC Conditions:</span>
+                          <span class="property-value"
+                            [class.highlight-match]="getHighlightClass(cable.nescCondition, searchParams.nescConditions)">
+                            {{cable.nescCondition}}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="cableData && cableData.length > 0" class="action-buttons">
+          <button class="btn-forward" (click)="forwardSelectedCables()">
+            <span class="btn-icon">📤</span>
+            Forward Selected Cables
+          </button>
+        </div>
+
+        <div *ngIf="!cableData || cableData.length === 0" class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>No Cable Data Available</h3>
+          <p>Perform a search to view cable specifications</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

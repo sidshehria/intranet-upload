@@ -1,0 +1,153 @@
+<header style="text-align: center; margin-bottom: 2rem;">
+  <h1 style="color: rgb(20, 14, 14); font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+    Cable Specification Generator
+  </h1>
+  <p style="color: rgba(20, 13, 13, 0.8); font-size: 1.1rem;">
+    Upload technical documents and generate standardized JSON specifications.
+  </p>
+</header>
+
+<div class="container"> 
+  <!-- Upload Section -->
+  <div class="upload-section">
+    <div class="header"> 
+      <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="bi bi-cloud-upload-fill" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0m-.5 14.5V11h1v3.5a.5.5 0 0 1-1 0"/>
+      </svg>
+      <p>Browse File to upload!</p>
+    </div> 
+    
+    <label for="file" class="footer"> 
+      <svg fill="#000000" viewBox="0 0 32 32" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <path d="M15.331 6H8.5v20h15V14.154h-8.169z"></path>
+          <path d="M18.153 6h-.009v5.342H23.5v-.002z"></path>
+        </g>
+      </svg> 
+      <p>Select File</p>
+      <svg viewBox="0 0 24 24" fill="none" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier"> 
+          <path d="M5.16565 10.1534C5.07629 8.99181 5.99473 8 7.15975 8H16.8402C18.0053 8 18.9237 8.9918 18.8344 10.1534L18.142 19.1534C18.0619 20.1954 17.193 21 16.1479 21H7.85206C6.80699 21 5.93811 20.1954 5.85795 19.1534L5.16565 10.1534Z" stroke="#000000" stroke-width="2"></path> 
+          <path d="M19.5 5H4.5" stroke="#000000" stroke-width="2" stroke-linecap="round"></path> 
+          <path d="M10 3C10 2.44772 10.4477 2 11 2H13C13.5523 2 14 2.44772 14 3V5H10V3Z" stroke="#000000" stroke-width="2"></path> 
+        </g>
+      </svg>
+      <input id="file" type="file" (change)="onFileSelected($event)" accept=".pdf"> 
+    </label>
+
+    <div class="file-info" *ngIf="selectedFile">
+      <p><strong>Selected file:</strong> {{selectedFile.name}}</p>
+      <p><strong>Size:</strong> {{selectedFile.size | number}} bytes</p>
+    </div>
+
+    <div class="upload-controls">
+      <button class="upload-btn" (click)="onUpload()" [disabled]="!selectedFile || isLoading">
+        {{isLoading ? 'Processing...' : 'Upload & Process File'}}
+      </button>
+      
+      <button class="clear-btn" (click)="clearForm()" [disabled]="isLoading">
+        Clear
+      </button>
+    </div>
+
+    <!-- Progress and Status -->
+    <div class="status-section">
+      <div *ngIf="uploadProgress > 0 && !uploadSuccess" class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+        </div>
+        <span>Upload Progress: {{uploadProgress}}%</span>
+      </div>
+      
+      <div *ngIf="uploadSuccess" class="success-message">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        File processed successfully!
+      </div>
+      
+      <div *ngIf="uploadError" class="error-message">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        {{uploadError}}
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div *ngIf="showResults && extractedData.length > 0" class="results-section">
+    <h3 style="text-align: center; margin-bottom: 1.5rem; color: #041a72;">
+      Extracted Cable Specifications
+    </h3>
+    
+    <div *ngFor="let result of extractedData; let i = index" class="result-card">
+      <div class="result-header">
+        <h4>Fiber Type: {{result.metadata?.fiber_type || 'Unknown'}}</h4>
+        <span class="file-info">Source: {{result.metadata?.source_file || 'Unknown file'}}</span>
+      </div>
+      
+      <!-- Technical Specifications -->
+      <div *ngIf="hasContent(result.technical_specifications)" class="specifications">
+        <h5>Technical Specifications:</h5>
+        <div class="specs-grid">
+          <div *ngFor="let section of objectKeys(result.technical_specifications)" class="spec-section">
+            <h6>{{section}}</h6>
+            <div *ngFor="let param of objectKeys(result.technical_specifications[section])" class="spec-item">
+              <span class="param-name">{{param}}:</span>
+              <span class="param-value">{{result.technical_specifications[section][param]}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Document Content (if available) -->
+      <div *ngIf="hasContent(result.document_content)" class="document-content">
+        <h5>Document Content:</h5>
+        <div class="content-section">
+          <div *ngFor="let page of objectKeys(result.document_content)" class="page-content">
+            <h6>{{page}}</h6>
+            <pre>{{result.document_content[page]}}</pre>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="!hasContent(result.technical_specifications) && !hasContent(result.document_content)" class="no-data">
+        No data extracted from this file.
+      </div>
+
+      <!-- HFCL API Push Button -->
+      <div class="hfcl-api-section" *ngIf="hasContent(result.technical_specifications)">
+        <div class="hfcl-controls">
+          <button class="hfcl-btn" 
+                  (click)="pushToHfclApi()" 
+                  [disabled]="hfclPushInProgress || !extractedData.length">
+            {{hfclPushInProgress ? 'Pushing to HFCL...' : 'Push to HFCL API'}}
+          </button>
+          
+          <div *ngIf="hfclPushSuccess" class="hfcl-success">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Data successfully pushed to HFCL API!
+          </div>
+          
+          <div *ngIf="hfclPushError" class="hfcl-error">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            {{hfclPushError}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showResults && extractedData.length === 0" class="no-results">
+    <p>No cable specifications were extracted from the uploaded file.</p>
+  </div>
+</div>

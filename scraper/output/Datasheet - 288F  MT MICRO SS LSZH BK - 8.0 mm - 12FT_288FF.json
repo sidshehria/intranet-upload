@@ -1,0 +1,17 @@
+{
+  "cableID": 0,
+  "cableDescription": "288F Optical Fiber Cable",
+  "fiberCount": "288F",
+  "typeofCable": "MT",
+  "span": "N/A",
+  "tube": "Multitube",
+  "tubeColorCoding": "N/A",
+  "fiberType": "G.657A1",
+  "diameter": "8.0 \u00b1 0.3 mm",
+  "tensile": "9 N",
+  "nescCondition": "Temperature range: -5 \u00b0C, 50 \u00b0C, -20 \u00b0C, 60 \u00b0C, -20 \u00b0C, 70 \u00b0C",
+  "crush": "500 N/10 cm",
+  "blowingLength": "N/A",
+  "datasheetURL": "Datasheet - 288F  MT MICRO SS LSZH BK - 8.0 mm - 12FT.pdf",
+  "isActive": "Y"
+}

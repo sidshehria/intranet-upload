@@ -1,0 +1,27 @@
+<div class="container">
+  <h2>JSON Files Preview</h2>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <table *ngIf="jsonFiles.length > 0" border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Filename</th>
+        <th>Metadata</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let file of jsonFiles">
+        <td>{{ file.filename }}</td>
+        <td>
+          <pre>{{ file.content.metadata | json }}</pre>
+        </td>
+        <td>
+          <button (click)="downloadJson(file.filename, file.content)">Download JSON</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="jsonFiles.length === 0 && !error">
+    No JSON files found.
+  </div>
+</div>
