@@ -7,12 +7,42 @@
   </p>
 </header>
 
+<!-- Backend Status Indicator -->
+<div class="backend-status" [ngClass]="backendStatus">
+  <div class="status-indicator">
+    <svg *ngIf="backendStatus === 'checking'" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2V6M12 18V22M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M2 12H6M18 12H22M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <svg *ngIf="backendStatus === 'online'" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <svg *ngIf="backendStatus === 'offline'" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="status-text">
+      <span *ngIf="backendStatus === 'checking'">Checking backend...</span>
+      <span *ngIf="backendStatus === 'online'">Backend online</span>
+      <span *ngIf="backendStatus === 'offline'">Backend offline</span>
+    </span>
+  </div>
+  
+  <button *ngIf="backendStatus === 'offline'" 
+          class="retry-btn" 
+          (click)="retryBackendConnection()"
+          title="Retry connection">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1 4V10H7M23 20V14H17M20.49 9A9 9 0 0 0 5.64 5.64L1 10M22 14L17.36 18.36A9 9 0 0 1 3.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Retry
+  </button>
+</div>
+
 <div class="container"> 
   <!-- Upload Section -->
   <div class="upload-section">
     <div class="header"> 
       <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="bi bi-cloud-upload-fill" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0m-.5 14.5V11h1v3.5a.5.5 0 0 1-1 0"/>
+        <path fill-rule="evenodd" d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 1 1-.708.708L8.5 5.707V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0m-.5 14.5V11h1v3.5a.5.5 0 0 1-1 0"/>
       </svg>
       <p>Browse File to upload!</p>
     </div> 
@@ -45,8 +75,17 @@
     </div>
 
     <div class="upload-controls">
-      <button class="upload-btn" (click)="onUpload()" [disabled]="!selectedFile || isLoading">
-        {{isLoading ? 'Processing...' : 'Upload & Process File'}}
+      <button class="upload-btn" 
+              (click)="onUpload()" 
+              [disabled]="!selectedFile || isLoading || backendStatus !== 'online'"
+              [title]="backendStatus !== 'online' ? 'Backend server is not available' : ''">
+        <span *ngIf="isLoading">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2V6M12 18V22M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M2 12H6M18 12H22M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Processing...
+        </span>
+        <span *ngIf="!isLoading">Upload & Process File</span>
       </button>
       
       <button class="clear-btn" (click)="clearForm()" [disabled]="isLoading">
@@ -126,7 +165,13 @@
           <button class="hfcl-btn" 
                   (click)="pushToHfclApi()" 
                   [disabled]="hfclPushInProgress || !extractedData.length">
-            {{hfclPushInProgress ? 'Pushing to HFCL...' : 'Push to HFCL API'}}
+            <span *ngIf="hfclPushInProgress">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2V6M12 18V22M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M2 12H6M18 12H22M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Pushing to HFCL...
+            </span>
+            <span *ngIf="!hfclPushInProgress">Push to HFCL API</span>
           </button>
           
           <div *ngIf="hfclPushSuccess" class="hfcl-success">
